@@ -6,7 +6,6 @@
 
     <form method="post">
         {% csrf_token %}
-
         <div class="form-group">
             {{ user_form.username.errors }}
             <label>Usuário:</label>
@@ -28,7 +27,6 @@
         <div class="form-group">
             <input type="submit" value="Cadastrar">
         </div>
-
     </form>
 
 {% endblock %}

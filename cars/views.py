@@ -25,7 +25,7 @@ def new_car_view(request):
             return redirect('cars_list')
     else:
         new_car_form = CarModelForm()
-        return render(request, 'new_car.html', { 'new_car_form': new_car_form})
+    return render(request, 'new_car.html', { 'new_car_form': new_car_form})
 
 # PARA FILTRAR DE FORMA PERSONALIZADA
 #     cars = Car.objects.filter(brand=1)

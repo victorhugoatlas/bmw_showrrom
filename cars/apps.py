@@ -1,4 +1,4 @@
-# /cars/apps.py
+# \cars\apps.py
 
 from django.apps import AppConfig
 

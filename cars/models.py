@@ -1,4 +1,4 @@
-# /cars/models.py
+# \cars\models.py
 
 from django.db import models
 

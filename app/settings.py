@@ -1,4 +1,4 @@
-# /app/settings.py
+# \app\settings.py
 
 """
 Django settings for app project.

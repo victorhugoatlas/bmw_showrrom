@@ -1,4 +1,4 @@
-# accounts/views.py
+# \accounts\views.py
 
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout

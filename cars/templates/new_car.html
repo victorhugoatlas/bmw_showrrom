@@ -1,17 +1,66 @@
-<!-- \cars\templates\new_car.html -->
+{% extends 'base.html' %}
 
-{% extends "base.html" %}
+{% block title %}Anunciar Veículo — Webmotors Dark{% endblock %}
 
 {% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        
+        <div class="border-b border-zinc-800 pb-4">
+            <h1 class="text-2xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-car-tunnel text-red-600"></i> Anunciar Veículo
+            </h1>
+            <p class="text-sm text-zinc-400 mt-1">Preencha os dados abaixo para cadastrar seu carro na plataforma.</p>
+        </div>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
 
-        <input type="submit" value="Cadastrar" class="btn btn_primary">
+            {% if form.non_field_errors %}
+                <div class="bg-red-950/50 border border-red-800 text-red-300 px-4 py-3 rounded-lg text-sm">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-    </form>
+            <!-- Grid principal do formulário -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {% for field in form %}
+                    <div class="{% if field.name == 'description' or field.name == 'version' %}md:col-span-2 lg:col-span-3{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="block text-xs uppercase font-bold text-zinc-400 mb-1.5">
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="flex items-center gap-3 pt-2">
+                                {{ field }}
+                                <span class="text-sm text-zinc-300">Marque se o veículo aceita troca na negociação</span>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
 
+                        {% if field.help_text %}
+                            <p class="text-xs text-zinc-500 mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <p class="text-xs text-red-500 mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="pt-6 border-t border-zinc-800 flex items-center justify-end gap-3">
+                <a href="{% url 'cars_list' %}" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors border border-zinc-700">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-red-600/20">
+                    Cadastrar Veículo
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
 {% endblock %}

@@ -1,32 +1,59 @@
-<!-- /accounts/templates/register.html -->
+{% extends 'base.html' %}
 
-{% extends "base.html" %}
+{% block title %}Criar Conta — Webmotors Dark{% endblock %}
 
 {% block content %}
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ user_form.username.errors }}
-            <label>Usuário:</label>
-            {{ user_form.username }}
+<div class="max-w-md mx-auto py-12">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 bg-red-600/10 border border-red-600/20 text-red-600 rounded-xl flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h1 class="text-2xl font-black text-white uppercase tracking-tight">Criar Conta</h1>
+            <p class="text-xs text-zinc-400">Cadastre-se para anunciar e negociar veículos.</p>
         </div>
 
-        <div class="form-group">
-            {{ user_form.password1.errors }}
-            <label>Senha:</label>
-            {{ user_form.password1 }}
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            {% if user_form.non_field_errors %}
+                <div class="bg-red-950/50 border border-red-800 text-red-300 px-4 py-3 rounded-lg text-xs">
+                    {{ user_form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in user_form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-xs uppercase font-bold text-zinc-400 mb-1.5">
+                    {{ field.label }}
+                </label>
+                <input 
+                    type="{{ field.field.widget.input_type|default:'text' }}" 
+                    name="{{ field.name }}" 
+                    id="{{ field.id_for_label }}"
+                    class="w-full bg-zinc-800 text-white border border-zinc-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-red-600 transition-colors" 
+                    required
+                >
+                {% if field.help_text %}
+                    <p class="text-[10px] text-zinc-500 mt-1 leading-tight">{{ field.help_text }}</p>
+                {% endif %}
+                {% if field.errors %}
+                    <p class="text-xs text-red-500 mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-sm transition-colors shadow-lg shadow-red-600/20 mt-2">
+                Criar minha conta
+            </button>
+        </form>
+
+        <div class="pt-4 border-t border-zinc-800 text-center text-xs text-zinc-400">
+            Já possui uma conta? 
+            <a href="{% url 'login' %}" class="text-red-500 hover:text-red-400 font-semibold underline">Fazer login</a>
         </div>
 
-        <div class="form-group">
-            {{ user_form.password2.errors }}
-            <label>Confirmação de Senha:</label>
-            {{ user_form.password2 }}
-        </div>
-
-        <div class="form-group">
-            <input type="submit" value="Cadastrar">
-        </div>
-    </form>
-
+    </div>
+</div>
 {% endblock %}

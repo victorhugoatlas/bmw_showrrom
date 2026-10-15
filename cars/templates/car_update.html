@@ -1,125 +1,67 @@
-<!-- \cars\templates\car_update.html -->
+{% extends 'base.html' %}
 
-{% extends "base.html" %}
+{% block title %}Editar {{ object.brand.name }} {{ object.model }} — Webmotors Dark{% endblock %}
 
 {% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        
+        <div class="border-b border-zinc-800 pb-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-red-600"></i> Editar Anúncio
+                </h1>
+                <p class="text-sm text-zinc-400 mt-1">Atualize as informações de {{ object.brand.name }} {{ object.model }}</p>
+            </div>
+            <a href="{% url 'car_detail' object.pk %}" class="text-xs text-zinc-400 hover:text-white transition-colors">Voltar aos detalhes</a>
+        </div>
 
-  <style>
-    form {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
 
-    form h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
+            {% if form.non_field_errors %}
+                <div class="bg-red-950/50 border border-red-800 text-red-300 px-4 py-3 rounded-lg text-sm">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 100%;
-      max-width: 600px;
-    }
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {% for field in form %}
+                    <div class="{% if field.name == 'description' or field.name == 'version' %}md:col-span-2 lg:col-span-3{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="block text-xs uppercase font-bold text-zinc-400 mb-1.5">
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="flex items-center gap-3 pt-2">
+                                {{ field }}
+                                <span class="text-sm text-zinc-300">Marque se o veículo aceita troca na negociação</span>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
 
-    th, td {
-      padding: 4px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+                        {% if field.help_text %}
+                            <p class="text-xs text-zinc-500 mt-1">{{ field.help_text }}</p>
+                        {% endif %}
 
-    th {
-      background-color: #f2f2f2;
-    }
+                        {% if field.errors %}
+                            <p class="text-xs text-red-500 mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
 
-    input[type="text"], input[type="number"], select, textarea {
-      padding: 8px;
-      font-size: 14px;
-      border: 2px solid #ddd;
-      border-radius: 4px;
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 8px;
-      transition: border-bottom-color 0.3s ease-in-out;
-    }
+            <div class="pt-6 border-t border-zinc-800 flex items-center justify-end gap-3">
+                <a href="{% url 'car_detail' object.pk %}" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors border border-zinc-700">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-red-600/20">
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
 
-    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-      outline: none;
-      border-bottom-color: #0096c7;
-    }
-
-    .btn {
-      background-color: #0096c7;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease-in-out;
-    }
-
-    .buttons-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      display: inline-block;
-      background-color: #0096c7;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease-in-out;
-      margin: 0 10px;
-    }
-
-    .btn:hover {
-      background-color: #108eb8;
-    }
-
-    .btn-danger {
-      background-color: #d9534f;
-      text-decoration: none !important;
-    }
-
-    .btn-danger:hover {
-      background-color: #d2221c;
-    }
-
-    .error-message {
-      color: #d9534f;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    a {
-      text-decoration: none !important;
-    }
-
-  </style>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <h1>Editar Carro</h1>
-    <table>
-      {{ form.as_table }}
-    </table>
-    <div>
-      <div class="buttons-container">
-        <input type="submit" value="Salvar Alterações" class="btn btn-primary">
-        <a href="{% url 'car_delete' pk=object.pk %}" class="btn btn-danger">Deletar Carro</a>
-        <a href="{% url 'cars_list' %}" class="btn btn-secondary">Cancelar</a>
-      </div>
     </div>
-  </form>
+</div>
 {% endblock %}

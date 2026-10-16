@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BMW Virtual Showroom & Line-Up</title>
+  <title>BMW Virtual Showroom | VH</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .font-bmw {
@@ -108,8 +108,8 @@
 
               <h3 class="text-2xl font-light text-gray-900 tracking-tight leading-snug">{{ vehicle.title }}</h3>
 
-              <!-- Imagem do Veículo Aumentada (h-56 com object-contain) -->
-              <div class="my-4 flex justify-center items-center h-56 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
+              <!-- Imagem do Veículo Aumentada (h-100 com object-contain) -->
+              <div class="my-4 flex justify-center items-center h-100 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
                 {% if vehicle.image %}
                   <img src="{{ vehicle.image.url }}" alt="{{ vehicle.title }}" class="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105">
                 {% else %}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMW Virtual Showroom & Line-Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .font-bmw {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#f4f4f4] text-gray-900 font-bmw min-h-screen">
+
+  <!-- Header Fixo -->
+  <header class="bg-white border-b border-gray-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center sticky top-0 z-50 gap-4">
+    <div class="flex items-center space-x-3">
+      <!-- Logo BMW SVG Vetorial Oficial -->
+      <svg class="w-10 h-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="48" fill="#000000"/>
+        <circle cx="50" cy="50" r="45" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
+        <circle cx="50" cy="50" r="38" fill="#000000"/>
+        <circle cx="50" cy="50" r="25" fill="#FFFFFF"/>
+        <!-- Quadrantes BMW Azul e Branco -->
+        <path d="M 50,25 A 25,25 0 0,1 75,50 L 50,50 Z" fill="#0066B1"/>
+        <path d="M 25,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#0066B1"/>
+        <path d="M 50,25 A 25,25 0 0,0 25,50 L 50,50 Z" fill="#FFFFFF"/>
+        <path d="M 75,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#FFFFFF"/>
+        <!-- Letras B M W -->
+        <text x="32" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">B</text>
+        <text x="46" y="17" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">M</text>
+        <text x="61" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">W</text>
+      </svg>
+      <span class="text-xl font-bold tracking-wider">BMW</span>
+    </div>
+
+    {% if messages %}
+      <div class="flex-1 max-w-md mx-4">
+        {% for message in messages %}
+          <div class="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-1.5 rounded text-xs text-center font-medium">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="flex items-center space-x-3 text-xs">
+      {% if user.is_authenticated %}
+        <span class="text-gray-500 hidden sm:inline">Modo Gestão: <b>{{ user.username }}</b></span>
+        <a href="{% url 'vehicle_create' %}" class="bg-black text-white px-4 py-2 rounded-xs font-medium hover:bg-gray-800 transition">+ Cadastrar Modelo</a>
+        <a href="/admin/logout/" class="text-gray-400 hover:text-black ml-2">Sair</a>
+      {% else %}
+        <a href="/admin/login/" class="bg-black text-white px-4 py-2 rounded-xs font-medium hover:bg-gray-800 transition">Entrar para Gerir</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <div class="flex flex-col md:flex-row min-h-[calc(100vh-73px)]">
+    
+    <!-- Filtros Lateral -->
+    <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 flex-shrink-0">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-bold text-gray-800 tracking-tight">Séries</h2>
+        <span class="text-gray-400 text-sm">▲</span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2" id="family-filters">
+        <button data-code="all" 
+                class="filter-btn bg-black text-white border border-black py-2.5 rounded-sm font-medium text-sm transition hover:bg-gray-800">
+          Todas
+        </button>
+        {% for f in families_filter %}
+          <button data-code="{{ f.code }}" 
+                  class="filter-btn bg-white text-gray-800 border border-gray-300 py-2.5 rounded-sm font-medium text-sm transition hover:border-black">
+            {{ f.code }}
+          </button>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <!-- Exibição de Veículos -->
+    <main class="flex-1 p-6 md:p-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="vehicles-grid">
+        {% for vehicle in vehicles %}
+          <div class="vehicle-card bg-white border border-gray-200 rounded-sm p-6 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300 relative group"
+               data-family="{{ vehicle.family }}">
+            
+            {% if user.is_authenticated %}
+              <div class="absolute top-3 right-3 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 p-1 rounded border border-gray-200 shadow-xs z-10 text-xs">
+                <a href="{% url 'vehicle_update' vehicle.pk %}" class="text-blue-600 font-medium hover:underline px-1">Editar</a>
+                <span class="text-gray-300">|</span>
+                <a href="{% url 'vehicle_delete' vehicle.pk %}" class="text-red-600 font-medium hover:underline px-1">Eliminar</a>
+              </div>
+            {% endif %}
+
+            <div>
+              <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                <div class="flex items-center gap-2">
+                  {% if vehicle.subtitle %}
+                    <span class="bg-gray-100 text-gray-700 font-semibold px-2 py-0.5 rounded-xs tracking-wide">
+                      {{ vehicle.subtitle }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <h3 class="text-2xl font-light text-gray-900 tracking-tight leading-snug">{{ vehicle.title }}</h3>
+
+              <!-- Imagem do Veículo Aumentada (h-56 com object-contain) -->
+              <div class="my-4 flex justify-center items-center h-56 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
+                {% if vehicle.image %}
+                  <img src="{{ vehicle.image.url }}" alt="{{ vehicle.title }}" class="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105">
+                {% else %}
+                  <div class="text-gray-300 text-xs italic">Sem imagem cadastrada</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-4 pt-3 border-t border-gray-100">
+                <!-- Tipo de Motorização -->
+                <div class="flex items-center gap-1.5 text-xs text-blue-600 font-medium">
+                  {% if vehicle.fuel_type == 'eletrico' %}
+                    <div class="w-5 h-5 rounded-full border border-blue-600 flex items-center justify-center">
+                      <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14v-8z"/></svg>
+                    </div>
+                    <span>Elétrico</span>
+                  {% elif vehicle.fuel_type == 'phev' %}
+                    <span class="text-emerald-600 font-semibold">Híbrido Plug-In</span>
+                  {% else %}
+                    <span class="text-gray-600 font-normal">{{ vehicle.get_fuel_type_display }}</span>
+                  {% endif %}
+                </div>
+
+                <!-- Logo M Performance -->
+                {% if vehicle.is_m_model %}
+                  <div class="flex items-center space-x-0.5">
+                    <div class="w-1.5 h-3 bg-[#0066B1] transform -skew-x-12"></div>
+                    <div class="w-1.5 h-3 bg-[#002A54] transform -skew-x-12"></div>
+                    <div class="w-1.5 h-3 bg-[#E0001B] transform -skew-x-12"></div>
+                    <span class="font-black italic text-xs tracking-tighter ml-1">M</span>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Links -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                {% if vehicle.configurator_url %}
+                  <a href="{{ vehicle.configurator_url }}" target="_blank" rel="noopener noreferrer" 
+                     class="text-center bg-black text-white py-2.5 font-medium rounded-xs hover:bg-gray-800 transition">
+                    Configurador
+                  </a>
+                {% else %}
+                  <button disabled class="bg-gray-100 text-gray-400 py-2.5 font-medium rounded-xs cursor-not-allowed">
+                    Sem Link
+                  </button>
+                {% endif %}
+
+                {% if vehicle.pdf_file %}
+                  <a href="{{ vehicle.pdf_file.url }}" target="_blank" 
+                     class="text-center border border-gray-300 text-gray-700 py-2.5 font-medium rounded-xs hover:bg-gray-50 hover:border-black transition">
+                    Ver PDF
+                  </a>
+                {% else %}
+                  <button disabled class="border border-gray-100 text-gray-300 py-2.5 font-medium rounded-xs cursor-not-allowed">
+                    Sem PDF
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        {% empty %}
+          <div class="col-span-full text-center py-16 bg-white border border-gray-200 rounded-sm">
+            <p class="text-gray-500 font-medium">Nenhum modelo cadastrado ainda.</p>
+            {% if user.is_authenticated %}
+              <a href="{% url 'vehicle_create' %}" class="inline-block mt-4 bg-black text-white px-4 py-2 text-xs rounded-xs font-medium">Cadastrar Primeiro Modelo</a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.vehicle-card');
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const selectedCode = button.getAttribute('data-code');
+
+          buttons.forEach(btn => {
+            btn.classList.remove('bg-black', 'text-white', 'border-black');
+            btn.classList.add('bg-white', 'text-gray-800', 'border-gray-300');
+          });
+          button.classList.remove('bg-white', 'text-gray-800', 'border-gray-300');
+          button.classList.add('bg-black', 'text-white', 'border-black');
+
+          cards.forEach(card => {
+            const cardFamily = card.getAttribute('data-family');
+            if (selectedCode === 'all' || cardFamily === selectedCode) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

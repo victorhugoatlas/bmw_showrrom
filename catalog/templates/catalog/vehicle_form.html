@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - BMW Showroom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white p-8 rounded-sm shadow-md max-w-xl w-full border border-gray-200 my-8">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+      <h1 class="text-xl font-bold text-gray-900">{{ title }}</h1>
+      <a href="{% url 'showroom_home' %}" class="text-xs text-gray-500 hover:text-black">✕ Fechar</a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="text-[11px] text-gray-400 mt-0.5">{{ field.help_text }}</p>
+          {% endif %}
+          {% if field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+        <a href="{% url 'showroom_home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-black">Cancelar</a>
+        <button type="submit" class="px-6 py-2 bg-black text-white text-sm font-medium rounded-xs hover:bg-gray-800 transition">Guardar Modelo</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - BMW Showroom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white p-8 rounded-sm shadow-md max-w-md w-full border border-gray-200 text-center">
+    <h1 class="text-xl font-bold text-gray-900 mb-4">{{ title }}</h1>
+    <p class="text-sm text-gray-600 mb-6">Tem a certeza de que deseja eliminar "{{ object }}"? Esta ação não pode ser desfeita.</p>
+
+    <form method="post" class="flex justify-center space-x-4">
+      {% csrf_token %}
+      <a href="{% url 'showroom_home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-black border border-gray-300 rounded-xs">Cancelar</a>
+      <button type="submit" class="px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-xs hover:bg-red-700">Eliminar</button>
+    </form>
+  </div>
+</body>
+</html>

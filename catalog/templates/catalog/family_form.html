@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - BMW Showroom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white p-8 rounded-sm shadow-md max-w-md w-full border border-gray-200">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ title }}</h1>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+        <a href="{% url 'showroom_home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-black">Cancelar</a>
+        <button type="submit" class="px-5 py-2 bg-black text-white text-sm font-medium rounded-xs hover:bg-gray-800">Guardar</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

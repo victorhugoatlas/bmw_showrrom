@@ -7,15 +7,20 @@ env/
 __pycache__/
 *.pyc
 *.pyo
+__pycache__/
+*.py[cod]
+*$py.class
+.vscode/
+.idea/
 
 # Banco de dados local
+*.sqlite3
 db.sqlite3
 
 # Arquivos de configuração e chaves
 .env
 
 # Arquivos de mídia e estáticos locais
-/media/
 /staticfiles/
 
 # Pasta de arquivos brutos e scripts locais

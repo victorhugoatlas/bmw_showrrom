@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BMW Virtual Showroom | VH</title>
+  <title>BMW Virtual Showroom & Line-Up</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .font-bmw {
@@ -16,18 +16,16 @@
   <!-- Header Fixo -->
   <header class="bg-white border-b border-gray-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center sticky top-0 z-50 gap-4">
     <div class="flex items-center space-x-3">
-      <!-- Logo BMW SVG Vetorial Oficial -->
+      <!-- Logo BMW SVG Vetorial -->
       <svg class="w-10 h-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="48" fill="#000000"/>
         <circle cx="50" cy="50" r="45" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
         <circle cx="50" cy="50" r="38" fill="#000000"/>
         <circle cx="50" cy="50" r="25" fill="#FFFFFF"/>
-        <!-- Quadrantes BMW Azul e Branco -->
         <path d="M 50,25 A 25,25 0 0,1 75,50 L 50,50 Z" fill="#0066B1"/>
         <path d="M 25,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#0066B1"/>
         <path d="M 50,25 A 25,25 0 0,0 25,50 L 50,50 Z" fill="#FFFFFF"/>
         <path d="M 75,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#FFFFFF"/>
-        <!-- Letras B M W -->
         <text x="32" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">B</text>
         <text x="46" y="17" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">M</text>
         <text x="61" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">W</text>
@@ -59,25 +57,73 @@
   <!-- Container Principal -->
   <div class="flex flex-col md:flex-row min-h-[calc(100vh-73px)]">
     
-    <!-- Filtros Lateral -->
-    <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 flex-shrink-0">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg font-bold text-gray-800 tracking-tight">Séries</h2>
-        <span class="text-gray-400 text-sm">▲</span>
+    <!-- Painel Lateral com Múltiplos Filtros -->
+    <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 flex-shrink-0 space-y-6">
+      
+      <!-- Filtro por Séries -->
+      <div>
+        <h2 class="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Séries</h2>
+        <div class="grid grid-cols-3 gap-2" id="family-filters">
+          <button data-family="all" 
+                  class="filter-family-btn bg-black text-white border border-black py-2 rounded-sm font-medium text-xs transition">
+            Todas
+          </button>
+          {% for f in families_filter %}
+            <button data-family="{{ f.code }}" 
+                    class="filter-family-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
+              {{ f.code }}
+            </button>
+          {% endfor %}
+        </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-2" id="family-filters">
-        <button data-code="all" 
-                class="filter-btn bg-black text-white border border-black py-2.5 rounded-sm font-medium text-sm transition hover:bg-gray-800">
-          Todas
-        </button>
-        {% for f in families_filter %}
-          <button data-code="{{ f.code }}" 
-                  class="filter-btn bg-white text-gray-800 border border-gray-300 py-2.5 rounded-sm font-medium text-sm transition hover:border-black">
-            {{ f.code }}
+      <!-- Filtro por Motorização (Estilo Botões/Grid) -->
+      <div class="border-t border-gray-100 pt-5">
+        <h2 class="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Motorização</h2>
+        <div class="grid grid-cols-2 gap-2" id="fuel-filters">
+          <button data-fuel="all" 
+                  class="filter-fuel-btn bg-black text-white border border-black py-2 rounded-sm font-medium text-xs transition col-span-2">
+            Todas
           </button>
-        {% endfor %}
+          <button data-fuel="gasolina" 
+                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
+            Gasolina
+          </button>
+          <button data-fuel="flex" 
+                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
+            Flex
+          </button>
+          <button data-fuel="phev" 
+                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
+            Plug-In
+          </button>
+          <button data-fuel="eletrico" 
+                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
+            Elétrico
+          </button>
+          <button data-fuel="diesel" 
+                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black col-span-2">
+            Diesel
+          </button>
+        </div>
       </div>
+
+      <!-- Filtro Apenas Linha M -->
+      <div class="border-t border-gray-100 pt-5">
+        <label class="flex items-center space-x-2 cursor-pointer">
+          <input type="checkbox" id="m-filter" class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black">
+          <span class="text-xs font-bold text-gray-800 flex items-center">
+            Apenas Modelos 
+            <span class="flex items-center space-x-0.5 ml-1.5">
+              <span class="w-1 h-2.5 bg-[#0066B1] transform -skew-x-12"></span>
+              <span class="w-1 h-2.5 bg-[#002A54] transform -skew-x-12"></span>
+              <span class="w-1 h-2.5 bg-[#E0001B] transform -skew-x-12"></span>
+              <span class="font-black italic text-xs ml-0.5">M</span>
+            </span>
+          </span>
+        </label>
+      </div>
+
     </aside>
 
     <!-- Exibição de Veículos -->
@@ -85,7 +131,9 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="vehicles-grid">
         {% for vehicle in vehicles %}
           <div class="vehicle-card bg-white border border-gray-200 rounded-sm p-6 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300 relative group"
-               data-family="{{ vehicle.family }}">
+               data-family="{{ vehicle.family }}"
+               data-fuel="{{ vehicle.fuel_type }}"
+               data-m="{{ vehicle.is_m_model|yesno:'true,false' }}">
             
             {% if user.is_authenticated %}
               <div class="absolute top-3 right-3 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 p-1 rounded border border-gray-200 shadow-xs z-10 text-xs">
@@ -108,8 +156,7 @@
 
               <h3 class="text-2xl font-light text-gray-900 tracking-tight leading-snug">{{ vehicle.title }}</h3>
 
-              <!-- Imagem do Veículo Aumentada (h-100 com object-contain) -->
-              <div class="my-4 flex justify-center items-center h-100 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
+              <div class="my-4 flex justify-center items-center h-56 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
                 {% if vehicle.image %}
                   <img src="{{ vehicle.image.url }}" alt="{{ vehicle.title }}" class="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105">
                 {% else %}
@@ -120,7 +167,6 @@
 
             <div>
               <div class="flex justify-between items-center mb-4 pt-3 border-t border-gray-100">
-                <!-- Tipo de Motorização -->
                 <div class="flex items-center gap-1.5 text-xs text-blue-600 font-medium">
                   {% if vehicle.fuel_type == 'eletrico' %}
                     <div class="w-5 h-5 rounded-full border border-blue-600 flex items-center justify-center">
@@ -134,7 +180,6 @@
                   {% endif %}
                 </div>
 
-                <!-- Logo M Performance -->
                 {% if vehicle.is_m_model %}
                   <div class="flex items-center space-x-0.5">
                     <div class="w-1.5 h-3 bg-[#0066B1] transform -skew-x-12"></div>
@@ -145,27 +190,16 @@
                 {% endif %}
               </div>
 
-              <!-- Links -->
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                {% if vehicle.configurator_url %}
-                  <a href="{{ vehicle.configurator_url }}" target="_blank" rel="noopener noreferrer" 
-                     class="text-center bg-black text-white py-2.5 font-medium rounded-xs hover:bg-gray-800 transition">
-                    Configurador
-                  </a>
-                {% else %}
-                  <button disabled class="bg-gray-100 text-gray-400 py-2.5 font-medium rounded-xs cursor-not-allowed">
-                    Sem Link
-                  </button>
-                {% endif %}
-
+              <!-- Botão do PDF -->
+              <div>
                 {% if vehicle.pdf_file %}
                   <a href="{{ vehicle.pdf_file.url }}" target="_blank" 
-                     class="text-center border border-gray-300 text-gray-700 py-2.5 font-medium rounded-xs hover:bg-gray-50 hover:border-black transition">
-                    Ver PDF
+                     class="block w-full text-center border border-gray-300 text-gray-800 py-2.5 font-medium rounded-xs hover:bg-black hover:text-white hover:border-black transition text-xs">
+                    Ver PDF do Configurador
                   </a>
                 {% else %}
-                  <button disabled class="border border-gray-100 text-gray-300 py-2.5 font-medium rounded-xs cursor-not-allowed">
-                    Sem PDF
+                  <button disabled class="w-full border border-gray-100 text-gray-300 py-2.5 font-medium rounded-xs text-xs cursor-not-allowed">
+                    Sem PDF Anexado
                   </button>
                 {% endif %}
               </div>
@@ -185,32 +219,70 @@
 
   </div>
 
+  <!-- JavaScript para Filtros Combinados com Botões de Motorização -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const buttons = document.querySelectorAll('.filter-btn');
+      const familyButtons = document.querySelectorAll('.filter-family-btn');
+      const fuelButtons = document.querySelectorAll('.filter-fuel-btn');
+      const mCheckbox = document.getElementById('m-filter');
       const cards = document.querySelectorAll('.vehicle-card');
 
-      buttons.forEach(button => {
-        button.addEventListener('click', () => {
-          const selectedCode = button.getAttribute('data-code');
+      let selectedFamily = 'all';
+      let selectedFuel = 'all';
 
-          buttons.forEach(btn => {
+      function applyFilters() {
+        const onlyM = mCheckbox.checked;
+
+        cards.forEach(card => {
+          const cardFamily = card.getAttribute('data-family');
+          const cardFuel = card.getAttribute('data-fuel');
+          const cardM = card.getAttribute('data-m') === 'true';
+
+          const matchFamily = (selectedFamily === 'all' || cardFamily === selectedFamily);
+          const matchFuel = (selectedFuel === 'all' || cardFuel === selectedFuel);
+          const matchM = (!onlyM || cardM === true);
+
+          if (matchFamily && matchFuel && matchM) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // Handler para Botões de Família
+      familyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedFamily = button.getAttribute('data-family');
+
+          familyButtons.forEach(btn => {
             btn.classList.remove('bg-black', 'text-white', 'border-black');
             btn.classList.add('bg-white', 'text-gray-800', 'border-gray-300');
           });
           button.classList.remove('bg-white', 'text-gray-800', 'border-gray-300');
           button.classList.add('bg-black', 'text-white', 'border-black');
 
-          cards.forEach(card => {
-            const cardFamily = card.getAttribute('data-family');
-            if (selectedCode === 'all' || cardFamily === selectedCode) {
-              card.style.display = 'flex';
-            } else {
-              card.style.display = 'none';
-            }
-          });
+          applyFilters();
         });
       });
+
+      // Handler para Botões de Motorização
+      fuelButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedFuel = button.getAttribute('data-fuel');
+
+          fuelButtons.forEach(btn => {
+            btn.classList.remove('bg-black', 'text-white', 'border-black');
+            btn.classList.add('bg-white', 'text-gray-800', 'border-gray-300');
+          });
+          button.classList.remove('bg-white', 'text-gray-800', 'border-gray-300');
+          button.classList.add('bg-black', 'text-white', 'border-black');
+
+          applyFilters();
+        });
+      });
+
+      mCheckbox.addEventListener('change', applyFilters);
     });
   </script>
 </body>

@@ -31,19 +31,19 @@ class VehicleModel(models.Model):
         max_length=10, 
         choices=FAMILY_CHOICES, 
         verbose_name="Família / Série",
-        help_text="Usado para o filtro e ordenação"
+        help_text="Usado para o filtro e ordenação inicial"
     )
     title = models.CharField(
         max_length=100, 
         verbose_name="Modelo e Versão", 
-        help_text="Ex: 320i M Sport, X7 xDrive40i LCI"
+        help_text="Ex: 320i M Sport, X1 sDrive20i"
     )
     subtitle = models.CharField(
         max_length=50, 
         blank=True,
         null=True,
         verbose_name="Código", 
-        help_text="Código da geração/chassi (Ex: G30, F30, G20...)"
+        help_text="Código da geração/chassi (Ex: G30, F30, U11...)"
     )
     fuel_type = models.CharField(
         max_length=50, 
@@ -51,16 +51,15 @@ class VehicleModel(models.Model):
         default='gasolina', 
         verbose_name="Motorização"
     )
+    order = models.PositiveIntegerField(
+        default=1,
+        verbose_name="Ordem de Exibição",
+        help_text="Número para ordenar modelos dentro da mesma série (Ex: 1, 2, 3...)"
+    )
     
     is_m_model = models.BooleanField(default=False, verbose_name="Modelo M ou M Performance")
     
     image = models.ImageField(upload_to='bmw_vehicles/', verbose_name="Imagem do Veículo")
-    configurator_url = models.URLField(
-        max_length=500, 
-        blank=True, 
-        null=True, 
-        verbose_name="Link do Configurador Alemão"
-    )
     pdf_file = models.FileField(
         upload_to='bmw_pdfs/', 
         blank=True, 
@@ -74,6 +73,7 @@ class VehicleModel(models.Model):
     class Meta:
         verbose_name = "Modelo de Veículo"
         verbose_name_plural = "Modelos de Veículos"
+        ordering = ['order', 'title']
 
     def __str__(self):
         return f"{self.get_family_display()} - {self.title}"

@@ -5,15 +5,17 @@ from .models import VehicleModel
 from .forms import VehicleModelForm
 
 def showroom_home(request):
-    # Ordem personalizada das séries
     custom_order = ['X7', 'X6', 'X5', 'X4', 'X3', 'X2', 'X1', '7', '6', '5', '4', '3', '2', '1', 'Z']
     
     all_vehicles = VehicleModel.objects.all()
     
-    # Ordenar veículos com base na ordem exata solicitada
+    # Ordenar primeiro pela Família (X7..1, Z) e depois pelo campo 'order' dentro da mesma família
     vehicles = sorted(
         all_vehicles, 
-        key=lambda v: custom_order.index(v.family) if v.family in custom_order else 99
+        key=lambda v: (
+            custom_order.index(v.family) if v.family in custom_order else 99,
+            v.order
+        )
     )
 
     active_family_codes = set(v.family for v in vehicles)

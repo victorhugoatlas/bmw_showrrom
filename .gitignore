@@ -1,0 +1,21 @@
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Bytecode e cache do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Banco de dados local (se aplicável)
+db.sqlite3
+
+# Arquivos de configuração e chaves
+.env
+
+# Arquivos de mídia e estáticos locais
+/media/
+/staticfiles/
+.arquivos
+/arquivos/

@@ -8,7 +8,7 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Banco de dados local (se aplicável)
+# Banco de dados local
 db.sqlite3
 
 # Arquivos de configuração e chaves
@@ -17,5 +17,6 @@ db.sqlite3
 # Arquivos de mídia e estáticos locais
 /media/
 /staticfiles/
-.arquivos
+
+# Pasta de arquivos brutos e scripts locais
 /arquivos/

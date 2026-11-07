@@ -1,289 +1,305 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BMW Virtual Showroom & Line-Up</title>
+  <title>BMW - Modelos e Configurações</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .font-bmw {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            bmw: {
+              gray: '#f8f9fa', sidebar: '#ffffff', card: '#ffffff',
+              blue: '#0653b6', dark: '#262626', textMuted: '#666666',
+              tagBg: '#eef2f6', border: '#e5e7eb'
+            }
+          }
+        }
+      }
     }
+  </script>
+  <style>
+    body { background-color: #f4f4f6; color: #262626; font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #999; }
+    .car-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .car-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
   </style>
+  {% load static %}
 </head>
-<body class="bg-[#f4f4f4] text-gray-900 font-bmw min-h-screen">
+<body class="min-h-screen flex flex-col antialiased selection:bg-bmw-blue selection:text-white">
 
-  <!-- Header Fixo -->
-  <header class="bg-white border-b border-gray-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center sticky top-0 z-50 gap-4">
-    <div class="flex items-center space-x-3">
-      <!-- Logo BMW SVG Vetorial -->
-      <svg class="w-10 h-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="48" fill="#000000"/>
-        <circle cx="50" cy="50" r="45" fill="#FFFFFF" stroke="#666666" stroke-width="1"/>
-        <circle cx="50" cy="50" r="38" fill="#000000"/>
-        <circle cx="50" cy="50" r="25" fill="#FFFFFF"/>
-        <path d="M 50,25 A 25,25 0 0,1 75,50 L 50,50 Z" fill="#0066B1"/>
-        <path d="M 25,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#0066B1"/>
-        <path d="M 50,25 A 25,25 0 0,0 25,50 L 50,50 Z" fill="#FFFFFF"/>
-        <path d="M 75,50 A 25,25 0 0,1 50,75 L 50,50 Z" fill="#FFFFFF"/>
-        <text x="32" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">B</text>
-        <text x="46" y="17" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">M</text>
-        <text x="61" y="22" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="bold" font-size="10" fill="#FFFFFF">W</text>
-      </svg>
-      <span class="text-xl font-bold tracking-wider">BMW</span>
-    </div>
-
-    {% if messages %}
-      <div class="flex-1 max-w-md mx-4">
-        {% for message in messages %}
-          <div class="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-1.5 rounded text-xs text-center font-medium">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <div class="flex items-center space-x-3 text-xs">
+  <!-- Header -->
+  <header class="w-full bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-50 shrink-0">
+    <div class="text-xl font-extrabold text-black tracking-widest">BMW</div>
+    <div class="flex items-center gap-3 text-xs">
       {% if user.is_authenticated %}
         <span class="text-gray-500 hidden sm:inline">Modo Gestão: <b>{{ user.username }}</b></span>
-        <a href="{% url 'vehicle_create' %}" class="bg-black text-white px-4 py-2 rounded-xs font-medium hover:bg-gray-800 transition">+ Cadastrar Modelo</a>
-        <a href="/admin/logout/" class="text-gray-400 hover:text-black ml-2">Sair</a>
+        <a href="{% url 'vehicle_create' %}" class="bg-black text-white px-3 py-1.5 rounded-sm font-medium hover:bg-gray-800 transition">+ Cadastrar</a>
+        <a href="/admin/logout/" class="text-gray-400 hover:text-black">Sair</a>
       {% else %}
-        <a href="/admin/login/" class="bg-black text-white px-4 py-2 rounded-xs font-medium hover:bg-gray-800 transition">Entrar para Gerir</a>
+        <a href="/admin/login/" class="bg-black text-white px-3 py-1.5 rounded-sm font-medium hover:bg-gray-800 transition">Entrar para Gerir</a>
       {% endif %}
     </div>
   </header>
 
-  <!-- Container Principal -->
-  <div class="flex flex-col md:flex-row min-h-[calc(100vh-73px)]">
-    
-    <!-- Painel Lateral com Múltiplos Filtros -->
-    <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 flex-shrink-0 space-y-6">
-      
-      <!-- Filtro por Séries -->
+  <!-- Container principal -->
+  <div class="flex flex-1 min-h-[calc(100vh-60px)]">
+
+  <!-- ================= SIDEBAR DE FILTROS ================= -->
+  <aside class="w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 min-h-screen p-6 custom-scrollbar overflow-y-auto">
+    <div class="flex justify-between items-center pb-6 border-b border-gray-200 mb-6">
+      <h2 class="text-xl font-light tracking-tight text-gray-900 flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-sm text-bmw-blue"></i>
+        Filtros de Veículos
+      </h2>
+      <button onclick="resetAllFilters()" id="reset-filters" class="text-xs font-medium text-bmw-blue hover:underline hidden">Limpar</button>
+    </div>
+
+    <!-- 1. Acordeão: Séries -->
+    <div class="mb-6 border-b border-gray-200 pb-6">
+      <button onclick="toggleAccordion('series-content','series-icon')" class="w-full flex justify-between items-center text-left font-medium text-gray-800 hover:text-black mb-3 focus:outline-none">
+        <span class="text-sm tracking-wide">Séries</span>
+        <i id="series-icon" class="fa-solid fa-chevron-up text-xs transition-transform duration-200"></i>
+      </button>
+      <div id="series-content" class="grid grid-cols-4 gap-2 pt-2">
+        <button onclick="selectSeries(this,'X7')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X7">X7</button>
+        <button onclick="selectSeries(this,'X6')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X6">X6</button>
+        <button onclick="selectSeries(this,'X5')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X5">X5</button>
+        <button onclick="selectSeries(this,'X4')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X4">X4</button>
+        <button onclick="selectSeries(this,'X3')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X3">X3</button>
+        <button onclick="selectSeries(this,'X2')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X2">X2</button>
+        <button onclick="selectSeries(this,'X1')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="X1">X1</button>
+        <button onclick="selectSeries(this,'7')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="7">7</button>
+        <button onclick="selectSeries(this,'6')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="6">6</button>
+        <button onclick="selectSeries(this,'5')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="5">5</button>
+        <button onclick="selectSeries(this,'4')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="4">4</button>
+        <button onclick="selectSeries(this,'3')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="3">3</button>
+        <button onclick="selectSeries(this,'2')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="2">2</button>
+        <button onclick="selectSeries(this,'1')" class="filter-series-btn border border-gray-200 py-1.5 px-2 text-xs font-medium rounded text-center hover:border-black transition-colors" data-series="1">1</button>
+      </div>
+    </div>
+
+    <!-- 2. Acordeão: Motorização -->
+    <div class="mb-6 border-b border-gray-200 pb-6">
+      <button onclick="toggleAccordion('engine-content','engine-icon')" class="w-full flex justify-between items-center text-left font-medium text-gray-800 hover:text-black mb-4 focus:outline-none">
+        <span class="text-sm tracking-wide">Motorização</span>
+        <i id="engine-icon" class="fa-solid fa-chevron-up text-xs transition-transform duration-200"></i>
+      </button>
+      <div id="engine-content" class="grid grid-cols-3 gap-3">
+        <button onclick="selectEngine(this,'eletrico')" class="filter-engine-btn border border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:border-black transition-all group" data-engine="eletrico">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"><i class="fa-solid fa-bolt text-lg text-gray-600 group-hover:text-bmw-blue"></i></div>
+          <span class="text-[11px] font-medium text-center text-gray-700 leading-tight">100% elétrico</span>
+        </button>
+        <button onclick="selectEngine(this,'phev')" class="filter-engine-btn border border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:border-black transition-all group" data-engine="phev">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"><i class="fa-solid fa-charging-station text-lg text-gray-600 group-hover:text-bmw-blue"></i></div>
+          <span class="text-[11px] font-medium text-center text-gray-700 leading-tight">Híbrido Plug-In</span>
+        </button>
+        <button onclick="selectEngine(this,'gasolina')" class="filter-engine-btn border border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:border-black transition-all group" data-engine="gasolina">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"><i class="fa-solid fa-gas-pump text-lg text-gray-600 group-hover:text-bmw-blue"></i></div>
+          <span class="text-[11px] font-medium text-center text-gray-700 leading-tight">Gasolina</span>
+        </button>
+        <button onclick="selectEngine(this,'diesel')" class="filter-engine-btn border border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:border-black transition-all group" data-engine="diesel">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"><i class="fa-solid fa-oil-can text-lg text-gray-600 group-hover:text-bmw-blue"></i></div>
+          <span class="text-[11px] font-medium text-center text-gray-700 leading-tight">Diesel</span>
+        </button>
+        <button onclick="selectEngine(this,'flex')" class="filter-engine-btn border border-gray-200 rounded-lg p-3 flex flex-col items-center justify-center gap-2 hover:border-black transition-all group" data-engine="flex">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"><i class="fa-solid fa-leaf text-lg text-gray-600 group-hover:text-bmw-blue"></i></div>
+          <span class="text-[11px] font-medium text-center text-gray-700 leading-tight">Flex</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Acordeão: BMW M -->
+    <div class="mb-6 border-b border-gray-200 pb-6">
+      <button onclick="toggleAccordion('m-content','m-icon')" class="w-full flex justify-between items-center text-left font-medium text-gray-800 hover:text-black mb-3 focus:outline-none">
+        <span class="text-sm tracking-wide flex items-center gap-2">BMW M <span class="inline-flex items-center"><span class="w-1.5 h-3 bg-sky-500 skew-x-[-12deg]"></span><span class="w-1.5 h-3 bg-blue-700 skew-x-[-12deg]"></span><span class="w-1.5 h-3 bg-red-600 skew-x-[-12deg]"></span></span></span>
+        <i id="m-icon" class="fa-solid fa-chevron-up text-xs transition-transform duration-200"></i>
+      </button>
+      <div id="m-content" class="pt-2">
+        <button onclick="toggleMFilter(this)" id="filter-m-btn" class="w-full border border-gray-200 py-2 px-3 rounded flex items-center justify-center gap-2 hover:border-black transition-colors text-xs font-semibold uppercase tracking-wider">
+          <span class="inline-flex items-center"><span class="w-1.5 h-3 bg-sky-500 skew-x-[-12deg]"></span><span class="w-1.5 h-3 bg-blue-700 skew-x-[-12deg]"></span><span class="w-1.5 h-3 bg-red-600 skew-x-[-12deg]"></span></span>
+          MODELOS M
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= ÁREA PRINCIPAL DOS CARDS ================= -->
+  <main class="flex-1 p-6 md:p-10 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h2 class="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Séries</h2>
-        <div class="grid grid-cols-3 gap-2" id="family-filters">
-          <button data-family="all" 
-                  class="filter-family-btn bg-black text-white border border-black py-2 rounded-sm font-medium text-xs transition">
-            Todas
-          </button>
-          {% for f in families_filter %}
-            <button data-family="{{ f.code }}" 
-                    class="filter-family-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
-              {{ f.code }}
-            </button>
-          {% endfor %}
-        </div>
+        <h1 class="text-2xl md:text-3xl font-light text-gray-900 tracking-tight">Todos os Modelos BMW</h1>
+
       </div>
-
-      <!-- Filtro por Motorização (Estilo Botões/Grid) -->
-      <div class="border-t border-gray-100 pt-5">
-        <h2 class="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Motorização</h2>
-        <div class="grid grid-cols-2 gap-2" id="fuel-filters">
-          <button data-fuel="all" 
-                  class="filter-fuel-btn bg-black text-white border border-black py-2 rounded-sm font-medium text-xs transition col-span-2">
-            Todas
-          </button>
-          <button data-fuel="gasolina" 
-                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
-            Gasolina
-          </button>
-          <button data-fuel="flex" 
-                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
-            Flex
-          </button>
-          <button data-fuel="phev" 
-                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
-            Plug-In
-          </button>
-          <button data-fuel="eletrico" 
-                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black">
-            Elétrico
-          </button>
-          <button data-fuel="diesel" 
-                  class="filter-fuel-btn bg-white text-gray-800 border border-gray-300 py-2 rounded-sm font-medium text-xs transition hover:border-black col-span-2">
-            Diesel
-          </button>
-        </div>
+      <div class="flex items-center gap-3 text-sm text-gray-600">
+        <span>Resultados encontrados: <strong id="results-count" class="text-gray-900 font-semibold">{{ vehicles|length }}</strong></span>
       </div>
+    </div>
 
-      <!-- Filtro Apenas Linha M -->
-      <div class="border-t border-gray-100 pt-5">
-        <label class="flex items-center space-x-2 cursor-pointer">
-          <input type="checkbox" id="m-filter" class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black">
-          <span class="text-xs font-bold text-gray-800 flex items-center">
-            Apenas Modelos 
-            <span class="flex items-center space-x-0.5 ml-1.5">
-              <span class="w-1 h-2.5 bg-[#0066B1] transform -skew-x-12"></span>
-              <span class="w-1 h-2.5 bg-[#002A54] transform -skew-x-12"></span>
-              <span class="w-1 h-2.5 bg-[#E0001B] transform -skew-x-12"></span>
-              <span class="font-black italic text-xs ml-0.5">M</span>
-            </span>
-          </span>
-        </label>
-      </div>
+    <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for vehicle in vehicles %}
+      <div class="car-card bg-white rounded-lg p-5 border border-gray-100 flex flex-col justify-between relative group"
+           data-series="{{ vehicle.family }}"
+           data-engine="{{ vehicle.fuel_type }}"
+           data-m="{{ vehicle.is_m_model|yesno:'true,false' }}">
 
-    </aside>
-
-    <!-- Exibição de Veículos -->
-    <main class="flex-1 p-6 md:p-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="vehicles-grid">
-        {% for vehicle in vehicles %}
-          <div class="vehicle-card bg-white border border-gray-200 rounded-sm p-6 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300 relative group"
-               data-family="{{ vehicle.family }}"
-               data-fuel="{{ vehicle.fuel_type }}"
-               data-m="{{ vehicle.is_m_model|yesno:'true,false' }}">
-            
-            {% if user.is_authenticated %}
-              <div class="absolute top-3 right-3 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 p-1 rounded border border-gray-200 shadow-xs z-10 text-xs">
-                <a href="{% url 'vehicle_update' vehicle.pk %}" class="text-blue-600 font-medium hover:underline px-1">Editar</a>
-                <span class="text-gray-300">|</span>
-                <a href="{% url 'vehicle_delete' vehicle.pk %}" class="text-red-600 font-medium hover:underline px-1">Eliminar</a>
-              </div>
-            {% endif %}
-
-            <div>
-              <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
-                <div class="flex items-center gap-2">
-                  {% if vehicle.subtitle %}
-                    <span class="bg-gray-100 text-gray-700 font-semibold px-2 py-0.5 rounded-xs tracking-wide">
-                      {{ vehicle.subtitle }}
-                    </span>
-                  {% endif %}
-                </div>
-              </div>
-
-              <h3 class="text-2xl font-light text-gray-900 tracking-tight leading-snug">{{ vehicle.title }}</h3>
-
-              <div class="my-4 flex justify-center items-center h-56 w-full bg-gray-50 rounded-sm p-2 overflow-hidden">
-                {% if vehicle.image %}
-                  <img src="{{ vehicle.image.url }}" alt="{{ vehicle.title }}" class="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105">
-                {% else %}
-                  <div class="text-gray-300 text-xs italic">Sem imagem cadastrada</div>
-                {% endif %}
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-4 pt-3 border-t border-gray-100">
-                <div class="flex items-center gap-1.5 text-xs text-blue-600 font-medium">
-                  {% if vehicle.fuel_type == 'eletrico' %}
-                    <div class="w-5 h-5 rounded-full border border-blue-600 flex items-center justify-center">
-                      <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14v-8z"/></svg>
-                    </div>
-                    <span>Elétrico</span>
-                  {% elif vehicle.fuel_type == 'phev' %}
-                    <span class="text-emerald-600 font-semibold">Híbrido Plug-In</span>
-                  {% else %}
-                    <span class="text-gray-600 font-normal">{{ vehicle.get_fuel_type_display }}</span>
-                  {% endif %}
-                </div>
-
-                {% if vehicle.is_m_model %}
-                  <div class="flex items-center space-x-0.5">
-                    <div class="w-1.5 h-3 bg-[#0066B1] transform -skew-x-12"></div>
-                    <div class="w-1.5 h-3 bg-[#002A54] transform -skew-x-12"></div>
-                    <div class="w-1.5 h-3 bg-[#E0001B] transform -skew-x-12"></div>
-                    <span class="font-black italic text-xs tracking-tighter ml-1">M</span>
-                  </div>
-                {% endif %}
-              </div>
-
-              <!-- Botão do PDF -->
-              <div>
-                {% if vehicle.pdf_file %}
-                  <a href="{{ vehicle.pdf_file.url }}" target="_blank" 
-                     class="block w-full text-center border border-gray-300 text-gray-800 py-2.5 font-medium rounded-xs hover:bg-black hover:text-white hover:border-black transition text-xs">
-                    Ver PDF do Configurador
-                  </a>
-                {% else %}
-                  <button disabled class="w-full border border-gray-100 text-gray-300 py-2.5 font-medium rounded-xs text-xs cursor-not-allowed">
-                    Sem PDF Anexado
-                  </button>
-                {% endif %}
-              </div>
-            </div>
-
+        <div>
+          <div class="flex justify-between items-start mb-1">
+            <span class="text-[11px] font-semibold tracking-wider text-gray-500 bg-bmw-tagBg px-2 py-0.5 rounded uppercase">{{ vehicle.subtitle }}</span>
           </div>
-        {% empty %}
-          <div class="col-span-full text-center py-16 bg-white border border-gray-200 rounded-sm">
-            <p class="text-gray-500 font-medium">Nenhum modelo cadastrado ainda.</p>
-            {% if user.is_authenticated %}
-              <a href="{% url 'vehicle_create' %}" class="inline-block mt-4 bg-black text-white px-4 py-2 text-xs rounded-xs font-medium">Cadastrar Primeiro Modelo</a>
+          <h3 class="text-2xl font-light text-gray-900 tracking-tight mb-2">{{ vehicle.title }}</h3>
+
+          {% if vehicle.fuel_type == 'eletrico' %}
+          <div class="absolute top-12 right-5 text-bmw-blue bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center" title="100% Elétrico"><i class="fa-solid fa-charging-station text-sm"></i></div>
+          {% elif vehicle.fuel_type == 'phev' %}
+          <div class="absolute top-12 right-5 text-blue-600 bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center" title="Híbrido Plug-In"><i class="fa-solid fa-bolt text-sm"></i></div>
+          {% endif %}
+
+          <div class="my-4 h-40 flex items-center justify-center overflow-hidden">
+            {% if vehicle.image %}
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.title }}" class="object-cover w-full h-full rounded transition-transform duration-300 group-hover:scale-105" loading="lazy">
+            {% else %}
+            <div class="text-gray-300 text-xs italic">Sem imagem cadastrada</div>
             {% endif %}
           </div>
-        {% endfor %}
-      </div>
-    </main>
 
+          {% if user.is_authenticated %}
+          <div class="absolute top-3 right-3 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/95 p-1 rounded border border-gray-200 shadow-xs z-10 text-xs">
+            <a href="{% url 'vehicle_update' vehicle.pk %}" class="text-blue-600 font-medium hover:underline px-1">Editar</a>
+            <span class="text-gray-300">|</span>
+            <a href="{% url 'vehicle_delete' vehicle.pk %}" class="text-red-600 font-medium hover:underline px-1">Apagar</a>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+          <span class="font-light">{{ vehicle.get_fuel_type_display }}</span>
+          {% if vehicle.is_m_model %}
+          <div class="flex items-center gap-0.5" title="BMW M High Performance">
+            <span class="w-1 h-3 bg-sky-500 skew-x-[-12deg]"></span>
+            <span class="w-1 h-3 bg-blue-700 skew-x-[-12deg]"></span>
+            <span class="w-1 h-3 bg-red-600 skew-x-[-12deg]"></span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full text-center py-20 bg-white rounded-lg border border-gray-200 mt-4">
+        <i class="fa-solid fa-car-side text-4xl text-gray-300 mb-3"></i>
+        <h3 class="text-lg font-medium text-gray-800">Nenhum veículo encontrado</h3>
+        <p class="text-sm text-gray-500 mt-1">Tente ajustar seus filtros para encontrar o modelo ideal.</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'vehicle_create' %}" class="inline-block mt-4 bg-black text-white px-4 py-2 text-xs rounded-sm font-medium">Cadastrar Primeiro Modelo</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </main>
   </div>
 
-  <!-- JavaScript para Filtros Combinados com Botões de Motorização -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const familyButtons = document.querySelectorAll('.filter-family-btn');
-      const fuelButtons = document.querySelectorAll('.filter-fuel-btn');
-      const mCheckbox = document.getElementById('m-filter');
-      const cards = document.querySelectorAll('.vehicle-card');
+    let selectedSeries = null;
+    let selectedEngine = null;
+    let onlyM = false;
 
-      let selectedFamily = 'all';
-      let selectedFuel = 'all';
-
-      function applyFilters() {
-        const onlyM = mCheckbox.checked;
-
-        cards.forEach(card => {
-          const cardFamily = card.getAttribute('data-family');
-          const cardFuel = card.getAttribute('data-fuel');
-          const cardM = card.getAttribute('data-m') === 'true';
-
-          const matchFamily = (selectedFamily === 'all' || cardFamily === selectedFamily);
-          const matchFuel = (selectedFuel === 'all' || cardFuel === selectedFuel);
-          const matchM = (!onlyM || cardM === true);
-
-          if (matchFamily && matchFuel && matchM) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
-          }
-        });
+    function toggleAccordion(contentId, iconId) {
+      const content = document.getElementById(contentId);
+      const icon = document.getElementById(iconId);
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.classList.remove('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        icon.classList.add('rotate-180');
       }
+    }
 
-      // Handler para Botões de Família
-      familyButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          selectedFamily = button.getAttribute('data-family');
+    function selectSeries(btn, series) {
+      if (selectedSeries === series) {
+        selectedSeries = null;
+        document.querySelectorAll('.filter-series-btn').forEach(b => b.classList.remove('bg-black','text-white','border-black'));
+      } else {
+        document.querySelectorAll('.filter-series-btn').forEach(b => b.classList.remove('bg-black','text-white','border-black'));
+        btn.classList.add('bg-black','text-white','border-black');
+        selectedSeries = series;
+      }
+      applyFilters();
+      updateResetBtn();
+    }
 
-          familyButtons.forEach(btn => {
-            btn.classList.remove('bg-black', 'text-white', 'border-black');
-            btn.classList.add('bg-white', 'text-gray-800', 'border-gray-300');
-          });
-          button.classList.remove('bg-white', 'text-gray-800', 'border-gray-300');
-          button.classList.add('bg-black', 'text-white', 'border-black');
+    function selectEngine(btn, engine) {
+      if (selectedEngine === engine) {
+        selectedEngine = null;
+        document.querySelectorAll('.filter-engine-btn').forEach(b => b.classList.remove('border-bmw-blue','bg-blue-50/50'));
+      } else {
+        document.querySelectorAll('.filter-engine-btn').forEach(b => b.classList.remove('border-bmw-blue','bg-blue-50/50'));
+        btn.classList.add('border-bmw-blue','bg-blue-50/50');
+        selectedEngine = engine;
+      }
+      applyFilters();
+      updateResetBtn();
+    }
 
-          applyFilters();
-        });
+    function toggleMFilter(btn) {
+      onlyM = !onlyM;
+      if (onlyM) {
+        btn.classList.add('border-black','bg-gray-100');
+      } else {
+        btn.classList.remove('border-black','bg-gray-100');
+      }
+      applyFilters();
+      updateResetBtn();
+    }
+
+    function resetAllFilters() {
+      selectedSeries = null;
+      selectedEngine = null;
+      onlyM = false;
+      document.querySelectorAll('.filter-series-btn').forEach(b => b.classList.remove('bg-black','text-white','border-black'));
+      document.querySelectorAll('.filter-engine-btn').forEach(b => b.classList.remove('border-bmw-blue','bg-blue-50/50'));
+      document.getElementById('filter-m-btn').classList.remove('border-black','bg-gray-100');
+      applyFilters();
+      updateResetBtn();
+    }
+
+    function updateResetBtn() {
+      const btn = document.getElementById('reset-filters');
+      if (selectedSeries || selectedEngine || onlyM) btn.classList.remove('hidden');
+      else btn.classList.add('hidden');
+    }
+
+    function applyFilters() {
+      const cards = document.querySelectorAll('.car-card');
+      cards.forEach(card => {
+        const s = card.getAttribute('data-series');
+        const e = card.getAttribute('data-engine');
+        const m = card.getAttribute('data-m') === 'true';
+        const okSeries = !selectedSeries || s === selectedSeries;
+        const okEngine = !selectedEngine || e === selectedEngine;
+        const okM = !onlyM || m === true;
+        card.style.display = (okSeries && okEngine && okM) ? 'flex' : 'none';
       });
+      updateCount();
+    }
 
-      // Handler para Botões de Motorização
-      fuelButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          selectedFuel = button.getAttribute('data-fuel');
+    function updateCount() {
+      const visible = document.querySelectorAll('.car-card:not([style*="none"])').length;
+      document.getElementById('results-count').textContent = visible;
+    }
 
-          fuelButtons.forEach(btn => {
-            btn.classList.remove('bg-black', 'text-white', 'border-black');
-            btn.classList.add('bg-white', 'text-gray-800', 'border-gray-300');
-          });
-          button.classList.remove('bg-white', 'text-gray-800', 'border-gray-300');
-          button.classList.add('bg-black', 'text-white', 'border-black');
-
-          applyFilters();
-        });
-      });
-
-      mCheckbox.addEventListener('change', applyFilters);
+    window.addEventListener('DOMContentLoaded', () => {
+      applyFilters();
+      updateCount();
     });
   </script>
+
 </body>
 </html>
